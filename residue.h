@@ -24,7 +24,8 @@ const unsigned sqrt_calculator_v = sqrt_calculator<N>::root;
 
 template<unsigned N, unsigned int M>
 struct is_prime_calculator {
-  static const bool value = (N % M != 0 && is_prime_calculator<N, M - 1>::value);
+  static const bool value = (N % M != 0 &&
+      is_prime_calculator<N, M - 1>::value);
 };
 
 template<unsigned N>
@@ -34,7 +35,8 @@ struct is_prime_calculator<N, 1> {
 
 template<unsigned N>
 struct is_prime {
-  static const bool value = is_prime_calculator<N, sqrt_calculator_v<N>>::value;
+  static const bool value = is_prime_calculator<N,
+      sqrt_calculator_v<N>>::value;
 };
 
 template<>
@@ -48,7 +50,7 @@ const bool is_prime_v = is_prime<N>::value;
 template <unsigned N, unsigned M>
 struct count_max_degree {
   static const unsigned value = (N % M == 0 ? M : 1) *
-                                count_max_degree<N / M * !static_cast<bool>(N % M), M>::value;
+      count_max_degree<N / M * !static_cast<bool>(N % M), M>::value;
 };
 
 template <unsigned M>
@@ -59,7 +61,8 @@ struct count_max_degree<0, M> {
 template<unsigned N, unsigned M>
 struct number_of_prime_divisors_calculator {
   static const unsigned value = (N % M == 0 && is_prime_v<M> ?
-      number_of_prime_divisors_calculator<N / count_max_degree<N, M>::value, M - 1>::value + 1:
+      number_of_prime_divisors_calculator<N / count_max_degree<N, M>::value,
+      M - 1>::value + 1:
       number_of_prime_divisors_calculator<N, M - 1>::value);
 };
 
@@ -70,7 +73,9 @@ struct number_of_prime_divisors_calculator<N, 1> {
 
 template<unsigned N>
 struct number_of_prime_divisors {
-  static const unsigned value = number_of_prime_divisors_calculator<N, static_cast<signed>(sqrt(N))>::value;
+  static const unsigned value =
+      number_of_prime_divisors_calculator<N,
+      static_cast<signed>(sqrt(N))>::value;
 };
 
 template<unsigned N>
@@ -92,3 +97,88 @@ struct has_primitive_root<4> {
 
 template<unsigned N>
 bool has_primitive_root_v = has_primitive_root<N>::value;
+
+template<unsigned N>
+class Residue {
+  unsigned x = 0;
+public:
+  Residue() = default;
+
+  explicit Residue(int x): x((N + x % N) % N) {};
+
+  explicit operator int() {
+    return x;
+  }
+
+  const Residue& operator+=(Residue other) {
+    x += other.x;
+    if (x > N) x -= N;
+    return *this;
+  }
+
+  const Residue& operator-=(Residue other) {
+    x -= other;
+    if (x > N) x += N;
+    return *this;
+  }
+
+  void print() {
+    cout << x;
+  }
+  //44
+  Residue pow(unsigned k) {
+    unsigned res = 1, t = x;
+    while (k > 0) {
+      if (k & 1) {
+        res = res * t % N;
+      }
+      t = t * t % N;
+      k /= 2;
+    }
+    return Residue(res);
+  }
+
+
+};
+
+template<unsigned N>
+Residue<N> operator+(Residue<N> x, Residue<N> y) {
+  x += y;
+  return x;
+}
+
+template<unsigned N>
+Residue<N> operator-(Residue<N> x, Residue<N> y) {
+  x -= y;
+  return x;
+}
+
+template<unsigned N>
+Residue<N> operator*(Residue<N> x, Residue<N> y) {
+  x = x * y % N;
+  return x;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
