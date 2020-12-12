@@ -5,11 +5,10 @@
 using namespace std;
 
 int32_t main() {
- Residue<12> x(11);
- Residue<12> y(2);
- x += y;
- x.pow(4);
-
-  //cout << is_prime<239>::value;
-  return 0;
+  //Residue<1>::getPrimitiveRoot();
+  Residue<2>::getPrimitiveRoot();
+  Residue<3>::getPrimitiveRoot();
+  Residue<4>::getPrimitiveRoot();
+  Residue<5>::getPrimitiveRoot();
+  //cout << is_single_degree<49, prime_divisor<91, sqrt_calculator_v<91>>::value>::value;
 }
